@@ -156,7 +156,7 @@ $(function() {
     });
 
     //all 'a' to _blank
-    $('a').attr('target','_blank');
+    //$('a').attr('target','_blank');
 
 /*var showToGame=document.querySelectorAll('[href*=toGame] img');
 var toGameCount=0;
