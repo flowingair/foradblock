@@ -5,10 +5,22 @@
 
 $(function() {
 
+    var date=new Date();
+    var thisWeek=0;
+    0,function todayWeek()
+    {
+        thisWeek=date.getDay()-1;
+        if(date.getDay()===0)
+        {
+            thisWeek=6;
+        }
+    }();
+
     //懒加载
     $('img').lazyload({
-                effect: "fadeIn",
-                threshold:100
+        effect: "fadeIn",
+        threshold:100,
+        skip_invisible:false
     })
 
     //最新更新换一批
@@ -39,12 +51,77 @@ $(function() {
     $weekLi.click(function () {
         $(this).addClass('active').siblings().removeClass('active');
         $weekTable.eq($(this).index()).show().siblings().hide();
+        btnShow($(this).index());
+    });
+
+    //翻页
+    //var $thisPage=thisWeek;
+    var $slideContainer=$('#container-left').find('.two-auto'),xh=0;
+    function btnShow(a)
+    {
+        xh=a;
+        if($slideContainer.find('ul').eq(a).height()>250)
+        {
+            $slideContainer.next().find('b').eq(1).show();
+            if($slideContainer.find('ul').eq(a).css('marginTop')=='-250px')
+            {
+                $slideContainer.nextAll('.page-count').find('b').eq(1).addClass('active').siblings().removeClass('active');
+            }
+            else
+            {
+                $slideContainer.nextAll('.page-count').find('b').eq(0).addClass('active').siblings().removeClass('active');
+            }
+        }
+        else
+        {
+            $slideContainer.next().find('b').eq(1).hide();
+            $slideContainer.nextAll('.page-count').find('b').eq(0).addClass('active').siblings().removeClass('active');
+        }
+    }
+    btnShow(thisWeek);
+
+    $slideContainer.nextAll('.page-count').find('b').click(function ()
+    {
+            $slideContainer.find('ul').eq(xh).css('marginTop','-'+$(this).index()*250+'px');
+            $(this).addClass('active').siblings().removeClass('active');
     });
     
+    //推荐内容
+    var $tuijian=$('.more-title');
+    var $perv=$tuijian.find('.arrow i').eq(0);
+    var $next=$tuijian.find('.arrow i').eq(1);
+    $perv.click(function ()
+    {
+        var $longContainer=$tuijian.find('.long-container');
+        if($longContainer.css('marginLeft')=='0px'||undefined)
+        {
+            $longContainer.css('marginLeft','-'+($longContainer.find('ul').length-1)*1020+'px');
+        }
+        else
+        {
+            $longContainer.css('marginLeft','0');
+        }
+
+    });
+    $next.click(function ()
+    {
+        var $longContainer=$tuijian.find('.long-container');
+        if($longContainer.css('marginLeft')=='-1020px')
+        {
+            $longContainer.css('marginLeft','0px');
+        }
+        else
+        {
+            $longContainer.css('marginLeft','-'+($longContainer.find('ul').length-1)*1020+'px');
+        }
+
+    });
+
 
     //新番时间表
-    var $week=$('#container-right .week ul li');
-    var $weekList=$('#container-right .week-list ul');
+    var $containerRight=$('#container-right');
+    var $week=$containerRight.find('.week ul li');
+    var $weekList=$containerRight.find('.week-list ul');
     $week.eq(thisWeek).addClass('today-week');
     $weekList.eq(thisWeek).show().siblings().hide();
     $week.click(function () {
@@ -53,8 +130,8 @@ $(function() {
     });
 
     //热门排行
-    var $mouth=$('#container-right .number-mouth ul li');
-    var $mouthList=$('#container-right .mouth-list ul');
+    var $mouth=$containerRight.find('.number-mouth ul li');
+    var $mouthList=$containerRight.find('.mouth-list ul');
     $mouthList.eq(0).show().siblings().hide();
     $mouth.click(function () {
         $(this).addClass('number-mouth-color').siblings().removeClass('number-mouth-color');
@@ -102,9 +179,9 @@ $(function() {
                         clickFn($(this));
                     });
                     /*if(confirm('try again?')){
-                        egg(thisEle);
-                        clickEle.unbind('click');
-                    }*/
+                     egg(thisEle);
+                     clickEle.unbind('click');
+                     }*/
                 }else{
                     random=Math.floor(Math.random()*100);
                     if(random<=80){
@@ -120,7 +197,7 @@ $(function() {
                             '" class="egg'+i+'"></div>'));
                         beginAnimate(i);
                         i++;
-                        console.log(i)
+                        //console.log(i)
                     }else{
                         interval();
                     }
@@ -150,45 +227,51 @@ $(function() {
         }
     });
     $backTop.click(function () {
-       $('body,html').animate({
-           scrollTop:0
-       },500)
+        $('body,html').animate({
+            scrollTop:0
+        },500)
     });
 
     //all 'a' to _blank
-    //$('a').attr('target','_blank');
-
-/*var showToGame=document.querySelectorAll('[href*=toGame] img');
-var toGameCount=0;
-for (var i=0;i<showToGame.length;i++) {
-  if (showToGame[i].offsetHeight===0) {
-    toGameCount++;
-  }
-}
-if (toGameCount>1) {
-  document.body.innerHTML="<h2 id='adb-contant'>我们检测到你可能使用了 AdBlock 或 Adblock Plus，它的部分策略可能会影响到正常功能的使用。<br>你可以设定特殊规则或将嘀哩嘀哩加入白名单，以便更好的在二次元世界驰骋。</h2>";
-}
-
-});*/
+    $('a').attr('target','_blank');
+    
+    
     //adblock-detector
     $.ajax({
-    url: "http://static.jfrft.com/js/main_list.js",
-    dataType: "script"
-    }).done(function(){   
+        url: "http://static.jfrft.com/js/main_list.js",
+        dataType: "script"
+    }).done(function(){
         $.ajax({
             url: "http://static.jfrft.com/js/main_video.js",
             dataType: "script"
-            }).fail(function(){
-                //document.body.innerHTML='<h2 id="adb-contant">我们检测到你可能使用了广告过滤插件或软件，它的部分策略可能会影响到正常功能的使用。<br>你可以设定特殊规则或将嘀哩嘀哩加入白名单，以便更好的在二次元世界驰骋。</h2>';
-            });
+        }).fail(function(){
+            //document.body.innerHTML='<h2 id="adb-contant">我们检测到你可能使用了广告过滤插件或软件，它的部分策略可能会影响到正常功能的使用。<br>你可以设定特殊规则或将嘀哩嘀哩加入白名单，以便更好的在二次元世界驰骋。</h2>';
+        });
     }).fail(function(){
         //document.body.innerHTML='<h2 id="adb-contant">我们检测到你可能使用了广告过滤插件或软件，它的部分策略可能会影响到正常功能的使用。<br>你可以设定特殊规则或将嘀哩嘀哩加入白名单，以便更好的在二次元世界驰骋。</h2>';
     });
-    
-    
-    
-    
-    
+
+    //search-toggle
+    searchToggle = function()
+    {
+        if($('.box3').parent().attr('title') == '切换至360搜索')
+        {
+            $('.box3').css('background','rgb(252, 171, 103) url("http://www.dilidili.wang/newimages/search_baidu.png") no-repeat scroll 50% 50% / auto padding-box border-box');
+            $('.search-box').hide();
+            $('#so360').show();
+            $('.box3').parent().attr('title','切换至百度搜索');
+        }
+        else
+        {
+            $('.box3').css('background','rgb(252, 171, 103) url("http://www.dilidili.wang/newimages/search_360.png") no-repeat scroll 50% 50% / auto padding-box border-box');
+            $('#so360').hide();
+            $('.search-box').show();
+            $('.box3').parent().attr('title','切换至360搜索');
+        }
+    }
+
+
+
 });
 
 

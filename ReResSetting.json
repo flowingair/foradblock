@@ -1,7 +1,7 @@
 [
 	{
 		"req": "http://www.dilidili.wang/newjs/main.js",
-		"res": "https://raw.githubusercontent.com/flowingair/foradblock/master/httpwww.dilidili.wangnewjsmain.js.js",
+		"res": "https://raw.githubusercontent.com/flowingair/foradblock/master/httpwww.dilidili.wangnewjsmain.js",
 		"checked": true,
 		"group": "adblock"
 	}
